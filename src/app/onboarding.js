@@ -9,10 +9,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 // Make sure your SVG is placed in assets/ or update the path accordingly
-// import LogoSvg from "../../assets/images/logo.svg";
+import LogoSvg from "../../assets/images/logo.svg";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -120,7 +120,7 @@ export default function OnboardingScreen() {
           <View style={styles.navBar}>
             <View style={styles.navPlaceholder} />
             <View style={styles.logoContainer}>
-              {/* <LogoSvg width={30} height={30} fill="#7A1380" /> */}
+              <LogoSvg width={30} height={30} fill="#7A1380" />
             </View>
             <TouchableOpacity
               onPress={handleSkip}
