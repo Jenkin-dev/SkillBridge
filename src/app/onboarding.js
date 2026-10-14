@@ -24,12 +24,12 @@ const SLIDES = [
     bottomTitle: "See exactly what you are missing",
     bottomSubtitle: "Compare your skills with the role you want.",
     topBg: "#FCECEB",
-    bottomBg: "#7A1380",
-    topTextColor: "#7A1380",
+    bottomBg: "#731F94",
+    topTextColor: "#731F94",
     bottomTextColor: "#FFFFFF",
     bottomSubTextColor: "#E6C6E4",
     buttonBg: "#FCECEB",
-    buttonTextColor: "#7A1380",
+    buttonTextColor: "#731F94",
     buttonBorder: "transparent",
     buttonLabel: "Next",
     dotsTheme: "light",
@@ -42,11 +42,11 @@ const SLIDES = [
     bottomTitle: "Get matched to real jobs",
     bottomSubtitle: "Every match comes with a clear reason.",
     topBg: "#FCECEB",
-    bottomBg: "#7A1380",
-    topTextColor: "#7A1380",
+    bottomBg: "#731F94",
+    topTextColor: "#731F94",
     bottomTextColor: "#FFFFFF",
     bottomSubTextColor: "#E6C6E4",
-    buttonBg: "#7A1380",
+    buttonBg: "#731F94",
     buttonTextColor: "#FFFFFF",
     buttonBorder: "#FFFFFF",
     buttonLabel: "Next",
@@ -65,7 +65,7 @@ const SLIDES = [
     topTextColor: "transparent",
     bottomTextColor: "#1C101B",
     bottomSubTextColor: "#483C47",
-    buttonBg: "#7A1380",
+    buttonBg: "#731F94",
     buttonTextColor: "#FFFFFF",
     buttonBorder: "transparent",
     buttonLabel: "Get Started",
@@ -120,7 +120,7 @@ export default function OnboardingScreen() {
           <View style={styles.navBar}>
             <View style={styles.navPlaceholder} />
             <View style={styles.logoContainer}>
-              <LogoSvg width={30} height={30} fill="#7A1380" />
+              <LogoSvg width={30} height={30} fill="#731F94" />
             </View>
             <TouchableOpacity
               onPress={handleSkip}
@@ -130,7 +130,7 @@ export default function OnboardingScreen() {
               <Text
                 style={[
                   styles.skipText,
-                  { color: item.topTextColor || "#7A1380" },
+                  { color: item.topTextColor || "#731F94" },
                 ]}
               >
                 Skip
@@ -209,7 +209,7 @@ export default function OnboardingScreen() {
                   {
                     backgroundColor: isActive
                       ? isDark
-                        ? "#7A1380"
+                        ? "#731F94"
                         : "#FCECEB"
                       : isDark
                         ? "#2A202A"
@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   pill: {
-    backgroundColor: "#7A1380",
+    backgroundColor: "#731F94",
   },
   pillTop: {
     width: 90,
