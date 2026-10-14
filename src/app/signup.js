@@ -28,6 +28,13 @@ export default function SignUpScreen() {
   const [agreeTerms, setAgreeTerms] = useState(true);
   const [emailError, setEmailError] = useState("");
 
+  const isFormValid =
+    fullName.trim() !== "" &&
+    email.trim() !== "" &&
+    password.trim() !== "" &&
+    !emailError &&
+    agreeTerms;
+
   const validateEmail = (text) => {
     setEmail(text);
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -86,7 +93,7 @@ export default function SignUpScreen() {
               <Text style={styles.label}>Full Name</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Form Text Input"
+                placeholder="Enter Full Legal Name"
                 placeholderTextColor="#A396A1"
                 value={fullName}
                 onChangeText={setFullName}
@@ -167,7 +174,8 @@ export default function SignUpScreen() {
             <TouchableOpacity
               onPress={handleNext}
               activeOpacity={0.85}
-              style={styles.nextButton}
+              disabled={!isFormValid}
+              style={[styles.nextButton, !isFormValid && styles.disabledButton]}
             >
               <Text style={styles.nextButtonText}>Next</Text>
             </TouchableOpacity>
@@ -341,6 +349,9 @@ const styles = StyleSheet.create({
     borderRadius: 26,
     alignItems: "center",
     justifyContent: "center",
+  },
+  disabledButton: {
+    backgroundColor: "#D1C7D2",
   },
   nextButtonText: {
     color: "#FFFFFF",
