@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-// Make sure your SVG is placed in assets/ or update the path accordingly
 import LogoSvg from "../../assets/images/logo.svg";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -85,7 +84,7 @@ export default function OnboardingScreen() {
       flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
       setCurrentIndex(nextIndex);
     } else {
-      router.replace("/(tabs)");
+      router.replace("/login");
     }
   };
 
