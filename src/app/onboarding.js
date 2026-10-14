@@ -14,7 +14,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import LogoSvg from "../../assets/images/logo.svg";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
-
 const SLIDES = [
   {
     id: "1",
@@ -84,7 +83,7 @@ export default function OnboardingScreen() {
       flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
       setCurrentIndex(nextIndex);
     } else {
-      router.replace("/login");
+      router.replace("/signup");
     }
   };
 
