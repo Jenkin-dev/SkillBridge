@@ -19,11 +19,14 @@ import LogoSvg from "../../assets/images/logo.svg";
 export default function ForgotPasswordScreen() {
   const router = useRouter();
   const [email, setEmail] = useState("");
-
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
   const handleSendCode = () => {
     if (!email.trim()) return;
-    // Route to your OTP verification screen
-    // router.push({ pathname: '/verify-otp', params: { email } });
+    // Logic to route to the OTP verification screen
+    router.push({
+      pathname: "/verify-otp",
+      params: { email },
+    });
   };
 
   return (
@@ -77,10 +80,21 @@ export default function ForgotPasswordScreen() {
             {/* Submit CTA */}
             <TouchableOpacity
               onPress={handleSendCode}
-              activeOpacity={0.85}
-              style={styles.button}
+              disabled={!isEmailValid}
+              activeOpacity={isEmailValid ? 0.85 : 1}
+              style={[
+                styles.button,
+                isEmailValid ? styles.buttonActive : styles.buttonDisabled,
+              ]}
             >
-              <Text style={styles.buttonText}>Send Verification Code</Text>
+              <Text
+                style={[
+                  styles.buttonText,
+                  !isEmailValid && styles.buttonTextDisabled,
+                ]}
+              >
+                Send Verification Code
+              </Text>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
@@ -109,6 +123,15 @@ const styles = StyleSheet.create({
     width: 40,
     justifyContent: "center",
     alignItems: "flex-start",
+  },
+  buttonActive: {
+    backgroundColor: "#7A1380",
+  },
+  buttonDisabled: {
+    backgroundColor: "#D1C2CE",
+  },
+  buttonTextDisabled: {
+    color: "#8A7B87",
   },
   logoWrapper: {
     alignItems: "center",
