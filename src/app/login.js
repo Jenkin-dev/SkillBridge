@@ -22,6 +22,8 @@ export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const isEmailValid = (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim());
+  const isFormValid = isEmailValid(email) && password.trim().length > 0;
 
   const handleLogin = () => {
     // Authenticate logic goes here
@@ -114,12 +116,22 @@ export default function LoginScreen() {
             {/* Log in Button */}
             <TouchableOpacity
               onPress={handleLogin}
-              activeOpacity={0.85}
-              style={styles.loginButton}
+              disabled={!isFormValid}
+              activeOpacity={isFormValid ? 0.85 : 1}
+              style={[
+                styles.loginButton,
+                isFormValid ? styles.buttonActive : styles.buttonDisabled,
+              ]}
             >
-              <Text style={styles.loginButtonText}>Log in</Text>
+              <Text
+                style={[
+                  styles.loginButtonText,
+                  !isFormValid && styles.buttonTextDisabled,
+                ]}
+              >
+                Log In
+              </Text>
             </TouchableOpacity>
-
             {/* Divider */}
             <View style={styles.dividerContainer}>
               <View style={styles.dividerLine} />
@@ -193,6 +205,17 @@ const styles = StyleSheet.create({
     width: 40,
     justifyContent: "center",
   },
+
+  buttonActive: {
+    backgroundColor: "#7A1380",
+  },
+  buttonDisabled: {
+    backgroundColor: "#D1C2CE",
+  },
+  buttonTextDisabled: {
+    color: "#8A7B87",
+  },
+
   logoWrapper: {
     alignItems: "center",
     justifyContent: "center",
