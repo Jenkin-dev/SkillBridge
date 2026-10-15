@@ -87,11 +87,13 @@ export default function VerifyOtpScreen() {
   };
 
   const handleVerify = () => {
+    if (!isOtpComplete) return;
     const code = otp.join("");
-    if (code.length < OTP_LENGTH) return;
 
-    // Navigate to set-new-password screen
-    // router.push({ pathname: '/reset-new-password', params: { email, code } });
+    router.push({
+      pathname: "/new-password",
+      params: { email, code },
+    });
   };
 
   const formatTimer = (seconds) => {
