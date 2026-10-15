@@ -119,8 +119,7 @@ export default function ProfileSetupScreen() {
     } else if (currentStep === 2) {
       setCurrentStep(3);
     } else {
-      // Complete profile and route to main dashboard
-      router.replace("/(tabs)");
+      router.push("/career-path");
     }
   };
 
