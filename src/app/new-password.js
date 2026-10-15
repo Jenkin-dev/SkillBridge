@@ -36,7 +36,6 @@ export default function NewPasswordScreen() {
 
     // Reset password API logic goes here
 
-    // Route to dashboard or login
     router.push("/profile-setup");
   };
 
