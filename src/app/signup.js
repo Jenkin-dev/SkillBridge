@@ -50,7 +50,7 @@ export default function SignUpScreen() {
       setEmailError("Enter a valid email address");
       return;
     }
-    // Proceed to next onboarding/verification step
+    router.push("/profile-setup");
   };
 
   const handleGoogleSignUp = () => {
