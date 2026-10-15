@@ -13,8 +13,6 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-
-// Top center logo SVG
 import { SafeAreaView } from "react-native-safe-area-context";
 import LogoSvg from "../../assets/images/logo.svg";
 
