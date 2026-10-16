@@ -10,8 +10,53 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+// ✏️ Edit values here: every time you press Save (Cmd+S / Ctrl+S), the screen updates INSTANTLY.
+const userProgress = {
+  name: "Amara",
+  targetRole: "Junior Data Analyst",
+  verifiedSkillsCount: 3,
+  totalTargetSkills: 9,
+  skillGapsCount: 6,
+  roadmap: {
+    currentDay: 12,
+    totalDays: 30,
+    currentTopic: "Master SQL Join Queries",
+  },
+};
+
 export default function HomeScreen() {
   const router = useRouter();
+
+  // Clamped 0–100% calculations based on userProgress
+  const readinessPercent =
+    userProgress.totalTargetSkills > 0
+      ? Math.min(
+          100,
+          Math.max(
+            0,
+            Math.round(
+              (userProgress.verifiedSkillsCount /
+                userProgress.totalTargetSkills) *
+                100,
+            ),
+          ),
+        )
+      : 0;
+
+  const roadmapPercent =
+    userProgress.roadmap.totalDays > 0
+      ? Math.min(
+          100,
+          Math.max(
+            0,
+            Math.round(
+              (userProgress.roadmap.currentDay /
+                userProgress.roadmap.totalDays) *
+                100,
+            ),
+          ),
+        )
+      : 0;
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -19,7 +64,7 @@ export default function HomeScreen() {
 
       {/* Top Header */}
       <View style={styles.headerBar}>
-        <Text style={styles.greetingText}>Hello, Amara</Text>
+        <Text style={styles.greetingText}>Hello, {userProgress.name}</Text>
 
         <View style={styles.headerRightIcons}>
           <TouchableOpacity style={styles.iconBtn} hitSlop={10}>
@@ -28,8 +73,8 @@ export default function HomeScreen() {
 
           <TouchableOpacity
             style={[styles.iconBtn, { marginLeft: 16 }]}
-            onPress={() => router.push("/settings")}
             hitSlop={10}
+            onPress={() => router.push("/settings")}
           >
             <Ionicons name="settings" size={24} color="#7A1380" />
           </TouchableOpacity>
@@ -44,7 +89,9 @@ export default function HomeScreen() {
         <View style={styles.targetGoalRow}>
           <Text style={styles.targetGoalLabel}>
             Target Goal:{" "}
-            <Text style={styles.targetGoalValue}>Junior Data Analyst</Text>
+            <Text style={styles.targetGoalValue}>
+              {userProgress.targetRole}
+            </Text>
           </Text>
 
           <TouchableOpacity
@@ -65,17 +112,21 @@ export default function HomeScreen() {
         <View style={styles.card}>
           <Text style={styles.cardHeading}>Career Readiness Score</Text>
 
-          {/* Progress Bar 68% */}
+          {/* Dynamic Progress Bar */}
           <View style={styles.progressTrack}>
-            <View style={[styles.progressFill, { width: "68%" }]} />
+            <View
+              style={[styles.progressFill, { width: `${readinessPercent}%` }]}
+            />
           </View>
 
-          <Text style={styles.readinessTitle}>68% Target Role Ready</Text>
+          <Text style={styles.readinessTitle}>
+            {readinessPercent}% Target Role Ready
+          </Text>
           <Text style={styles.readinessSubtitle}>
-            You have 3 of 9 target skills verified.
+            You have {userProgress.verifiedSkillsCount} of{" "}
+            {userProgress.totalTargetSkills} target skills verified.
           </Text>
 
-          {/* View Skill Matrix Button */}
           <TouchableOpacity
             style={styles.matrixBtn}
             activeOpacity={0.8}
@@ -90,9 +141,10 @@ export default function HomeScreen() {
         <Text style={styles.sectionTitle}>Quick Stats</Text>
 
         <View style={styles.statsRow}>
-          {/* Possessed Box */}
           <View style={styles.statBox}>
-            <Text style={styles.statNumber}>3 Possessed</Text>
+            <Text style={styles.statNumber}>
+              {userProgress.verifiedSkillsCount} Possessed
+            </Text>
             <View style={styles.statStatusRow}>
               <View style={styles.verifiedIconBox}>
                 <Ionicons name="checkmark" size={12} color="#FFFFFF" />
@@ -101,9 +153,10 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          {/* Skill Gaps Box */}
           <View style={styles.statBox}>
-            <Text style={styles.statNumber}>6 Skill Gaps</Text>
+            <Text style={styles.statNumber}>
+              {userProgress.skillGapsCount} Skill Gaps
+            </Text>
             <View style={styles.statStatusRow}>
               <Ionicons name="warning" size={16} color="#E5B800" />
               <Text style={[styles.statStatusText, { marginLeft: 4 }]}>
@@ -120,16 +173,22 @@ export default function HomeScreen() {
           <View style={styles.roadmapHeaderRow}>
             <Ionicons name="play" size={18} color="#7A1380" />
             <Text style={styles.roadmapTitle}>
-              Day 12 of 30: Master SQL Join Queries
+              Day {userProgress.roadmap.currentDay} of{" "}
+              {userProgress.roadmap.totalDays}:{" "}
+              {userProgress.roadmap.currentTopic}
             </Text>
           </View>
 
-          {/* Progress Bar 40% */}
+          {/* Dynamic Progress Bar */}
           <View style={styles.progressTrack}>
-            <View style={[styles.progressFill, { width: "40%" }]} />
+            <View
+              style={[styles.progressFill, { width: `${roadmapPercent}%` }]}
+            />
           </View>
 
-          <Text style={styles.roadmapProgressText}>Progress: 40% Complete</Text>
+          <Text style={styles.roadmapProgressText}>
+            Progress: {roadmapPercent}% Complete
+          </Text>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -164,7 +223,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 20,
-    paddingBottom: 110, // accounts for the floating bottom tab bar
+    paddingBottom: 110,
   },
   targetGoalRow: {
     flexDirection: "row",
