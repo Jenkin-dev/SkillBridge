@@ -4,11 +4,13 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   Alert,
+  Modal,
   ScrollView,
   StatusBar,
   StyleSheet,
   Switch,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -16,6 +18,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SettingsScreen() {
   const router = useRouter();
+
+  // Modal Visibility States
+  const [logoutModalVisible, setLogoutModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
 
   // Notification Toggles
   const [jobAlerts, setJobAlerts] = useState(true);
@@ -25,36 +32,26 @@ export default function SettingsScreen() {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(true);
   const [recruiterNetwork, setRecruiterNetwork] = useState(true);
 
-  const handleLogout = () => {
-    Alert.alert("Log Out", "Are you sure you want to log out of SkillBridge?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Log Out",
-        style: "destructive",
-        onPress: async () => {
-          // Keep 'already_onboarded' = 'true' so returning user hits /login
-          router.replace("/login");
-        },
-      },
-    ]);
+  const confirmLogout = async () => {
+    setLogoutModalVisible(false);
+    // Keep 'already_onboarded' = 'true' so returning user hits /login
+    router.replace("/login");
   };
 
-  const handleDeleteAccount = () => {
-    Alert.alert(
-      "Delete Account",
-      "This will permanently delete your CV, matched jobs, and profile history. This action cannot be undone.",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete Permanently",
-          style: "destructive",
-          onPress: async () => {
-            await AsyncStorage.clear();
-            router.replace("/onboarding");
-          },
-        },
-      ],
-    );
+  const confirmDeleteAccount = async () => {
+    if (!deletePassword.trim()) {
+      Alert.alert(
+        "Required",
+        "Please enter your password to confirm account deletion.",
+      );
+      return;
+    }
+
+    setDeleteModalVisible(false);
+    setDeletePassword("");
+    // Clear local storage and reset to onboarding
+    await AsyncStorage.clear();
+    router.replace("/onboarding");
   };
 
   return (
@@ -87,7 +84,6 @@ export default function SettingsScreen() {
         {/* ================= 1. Account and security ================= */}
         <Text style={styles.sectionHeader}>Account and security</Text>
         <View style={styles.card}>
-          {/* Password Reset */}
           <TouchableOpacity
             style={styles.rowItem}
             activeOpacity={0.7}
@@ -102,7 +98,6 @@ export default function SettingsScreen() {
 
           <View style={styles.divider} />
 
-          {/* Two-Factor Authentication */}
           <View style={styles.rowItem}>
             <View style={styles.rowTextContainer}>
               <Text style={styles.rowTitle}>Two–factor authentication</Text>
@@ -135,7 +130,6 @@ export default function SettingsScreen() {
         {/* ================= 2. Notifications ================= */}
         <Text style={styles.sectionHeader}>Notifications</Text>
         <View style={styles.card}>
-          {/* Job match alerts */}
           <View style={styles.rowItem}>
             <View style={styles.rowTextContainer}>
               <Text style={styles.rowTitle}>Job match alerts</Text>
@@ -153,7 +147,6 @@ export default function SettingsScreen() {
 
           <View style={styles.divider} />
 
-          {/* Weekly progress summary */}
           <View style={styles.rowItem}>
             <View style={styles.rowTextContainer}>
               <Text style={styles.rowTitle}>Weekly progress summary</Text>
@@ -171,7 +164,6 @@ export default function SettingsScreen() {
         {/* ================= 3. Privacy and data ================= */}
         <Text style={styles.sectionHeader}>Privacy and data</Text>
         <View style={styles.card}>
-          {/* Data retention */}
           <TouchableOpacity style={styles.rowItem} activeOpacity={0.7}>
             <View style={styles.rowTextContainer}>
               <Text style={styles.rowTitle}>Data retention</Text>
@@ -182,11 +174,10 @@ export default function SettingsScreen() {
 
           <View style={styles.divider} />
 
-          {/* Delete account */}
           <TouchableOpacity
             style={styles.rowItem}
             activeOpacity={0.7}
-            onPress={handleDeleteAccount}
+            onPress={() => setDeleteModalVisible(true)}
           >
             <View style={styles.rowTextContainer}>
               <Text style={styles.rowTitle}>Delete account</Text>
@@ -199,7 +190,6 @@ export default function SettingsScreen() {
 
           <View style={styles.divider} />
 
-          {/* Recruiter Visibility Network */}
           <View style={styles.rowItem}>
             <View style={styles.rowTextContainer}>
               <Text style={styles.rowTitle}>Recruiter Visibility Network</Text>
@@ -220,7 +210,6 @@ export default function SettingsScreen() {
         {/* ================= 4. Help and support ================= */}
         <Text style={styles.sectionHeader}>Help and support</Text>
         <View style={styles.card}>
-          {/* FAQs */}
           <TouchableOpacity style={styles.rowItem} activeOpacity={0.7}>
             <View style={styles.rowTextContainer}>
               <Text style={styles.rowTitle}>FAQs</Text>
@@ -230,7 +219,6 @@ export default function SettingsScreen() {
 
           <View style={styles.divider} />
 
-          {/* Contact support */}
           <TouchableOpacity style={styles.rowItem} activeOpacity={0.7}>
             <View style={styles.rowTextContainer}>
               <Text style={styles.rowTitle}>Contact support</Text>
@@ -242,15 +230,123 @@ export default function SettingsScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Log out CTA */}
+        {/* Log out trigger button */}
         <TouchableOpacity
           style={styles.logoutButton}
-          onPress={handleLogout}
+          onPress={() => setLogoutModalVisible(true)}
           activeOpacity={0.85}
         >
           <Text style={styles.logoutText}>Log out</Text>
         </TouchableOpacity>
       </ScrollView>
+
+      {/* ================= Logout Confirmation Modal ================= */}
+      <Modal
+        visible={logoutModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setLogoutModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>Log out?</Text>
+            <Text style={styles.modalSubtitle}>
+              Are you sure you want to Log out??
+            </Text>
+
+            <View style={styles.modalActionRow}>
+              <TouchableOpacity
+                style={styles.modalCancelBtn}
+                onPress={() => setLogoutModalVisible(false)}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.modalCancelText}>Cancel</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.modalLogoutBtn}
+                onPress={confirmLogout}
+                activeOpacity={0.85}
+              >
+                <Text style={styles.modalLogoutText}>Log Out</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* ================= Delete Account Confirmation Modal ================= */}
+      <Modal
+        visible={deleteModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => {
+          setDeleteModalVisible(false);
+          setDeletePassword("");
+        }}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>Delete account</Text>
+
+            {/* Warning callout banner */}
+            <View style={styles.deleteWarningBanner}>
+              <Ionicons
+                name="warning-outline"
+                size={18}
+                color="#B71C1C"
+                style={{ marginTop: 1, marginRight: 8 }}
+              />
+              <Text style={styles.deleteWarningText}>
+                This permanently deletes your data.
+              </Text>
+            </View>
+
+            {/* Password confirmation input box */}
+            <View style={styles.passwordInputContainer}>
+              <Feather
+                name="lock"
+                size={16}
+                color="#1C101B"
+                style={{ marginRight: 8 }}
+              />
+              <TextInput
+                style={styles.passwordInput}
+                placeholder="Confirm password"
+                placeholderTextColor="#1C101B"
+                secureTextEntry
+                value={deletePassword}
+                onChangeText={setDeletePassword}
+                autoCapitalize="none"
+              />
+            </View>
+
+            {/* Modal action buttons */}
+            <View style={styles.modalActionRow}>
+              <TouchableOpacity
+                style={styles.modalCancelBtn}
+                onPress={() => {
+                  setDeleteModalVisible(false);
+                  setDeletePassword("");
+                }}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.modalCancelText}>Cancel</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.deleteConfirmBtn}
+                onPress={confirmDeleteAccount}
+                activeOpacity={0.85}
+              >
+                <Text style={styles.deleteConfirmText}>
+                  Delete{"\n"}account
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -371,5 +467,126 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "800",
     color: "#D32F2F",
+  },
+
+  /* Common Modal Styles */
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.45)",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 24,
+  },
+  modalCard: {
+    width: "100%",
+    maxWidth: 320,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 18,
+    borderWidth: 1.2,
+    borderColor: "#7A1380",
+    paddingVertical: 22,
+    paddingHorizontal: 20,
+    elevation: 6,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: "#1C101B",
+    marginBottom: 12,
+  },
+  modalSubtitle: {
+    fontSize: 14,
+    color: "#4B3F4B",
+    lineHeight: 20,
+    marginBottom: 20,
+  },
+  modalActionRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  modalCancelBtn: {
+    flex: 1,
+    height: 44,
+    borderRadius: 8,
+    borderWidth: 1.2,
+    borderColor: "#7A1380",
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modalCancelText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#7A1380",
+  },
+  modalLogoutBtn: {
+    flex: 1,
+    height: 44,
+    borderRadius: 8,
+    backgroundColor: "#A81313",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modalLogoutText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#FFFFFF",
+  },
+
+  /* Delete Account Modal Elements */
+  deleteWarningBanner: {
+    backgroundColor: "#F8D7DA",
+    borderRadius: 6,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 14,
+  },
+  deleteWarningText: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#B71C1C",
+    flex: 1,
+    lineHeight: 18,
+  },
+  passwordInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1.2,
+    borderColor: "#7A1380",
+    borderRadius: 6,
+    paddingHorizontal: 12,
+    height: 46,
+    marginBottom: 20,
+    backgroundColor: "#FFFFFF",
+  },
+  passwordInput: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#1C101B",
+  },
+  deleteConfirmBtn: {
+    flex: 1,
+    height: 44,
+    borderRadius: 8,
+    borderWidth: 1.2,
+    borderColor: "#B71C1C",
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  deleteConfirmText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#B71C1C",
+    textAlign: "center",
+    lineHeight: 14,
   },
 });
