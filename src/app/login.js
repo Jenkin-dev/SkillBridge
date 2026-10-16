@@ -27,7 +27,7 @@ export default function LoginScreen() {
 
   const handleLogin = () => {
     // Authenticate logic goes here
-    // router.replace("/(tabs)");
+    router.replace("/(tabs)");
   };
 
   const handleGoogleSignIn = () => {
