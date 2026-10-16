@@ -28,6 +28,7 @@ export default function HomeScreen() {
 
           <TouchableOpacity
             style={[styles.iconBtn, { marginLeft: 16 }]}
+            onPress={() => router.push("/settings")}
             hitSlop={10}
           >
             <Ionicons name="settings" size={24} color="#7A1380" />
