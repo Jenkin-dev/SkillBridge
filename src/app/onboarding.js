@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import {
@@ -10,7 +11,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
 import LogoSvg from "../../assets/images/logo.svg";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -77,22 +77,27 @@ export default function OnboardingScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef(null);
 
+  const handleFinishOnboarding = async () => {
+    try {
+      await AsyncStorage.setItem("already_onboarded", "true");
+    } catch (e) {
+      console.error(e);
+    }
+    router.replace("/signup"); 
+  };
+
   const handleNext = () => {
     if (currentIndex < SLIDES.length - 1) {
       const nextIndex = currentIndex + 1;
       flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
       setCurrentIndex(nextIndex);
     } else {
-      router.replace("/signup");
+      handleFinishOnboarding();
     }
   };
 
   const handleSkip = () => {
-    flatListRef.current?.scrollToIndex({
-      index: SLIDES.length - 1,
-      animated: true,
-    });
-    setCurrentIndex(SLIDES.length - 1);
+    handleFinishOnboarding();
   };
 
   const onMomentumScrollEnd = (event) => {

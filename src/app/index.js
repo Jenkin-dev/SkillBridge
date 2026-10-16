@@ -1,13 +1,70 @@
-import { router } from "expo-router";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
+import { useEffect, useRef } from "react";
+import { Animated, StatusBar, StyleSheet, Text, View } from "react-native";
 
-export default function Index() {
+import LogoSvg from "../../assets/images/logo.svg";
+
+export default function SplashScreen() {
+  const router = useRouter();
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.92)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 7,
+        tension: 40,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    const determineRoute = async () => {
+      // Minimum display timer so splash is visible and smooth (1.8s)
+      const splashDelay = new Promise((resolve) => setTimeout(resolve, 1800));
+
+      try {
+        const [hasOnboarded] = await Promise.all([
+          AsyncStorage.getItem("already_onboarded"),
+          splashDelay,
+        ]);
+
+        if (hasOnboarded === "true") {
+          router.replace("/login");
+        } else {
+          router.replace("/onboarding");
+        }
+      } catch (e) {
+        await splashDelay;
+        router.replace("/onboarding");
+      }
+    };
+
+    determineRoute();
+  }, [fadeAnim, scaleAnim, router]);
+
   return (
     <View style={styles.container}>
-      <Text>Edit src/app/index.tsx to edit this screen. are yu for real</Text>
-      <TouchableOpacity onPress={() => router.push("/onboarding")}>
-        <Text>Go to Onboarding</Text>
-      </TouchableOpacity>
+      <StatusBar barStyle="dark-content" backgroundColor="#F9F9FB" />
+
+      <Animated.View
+        style={[
+          styles.logoContainer,
+          {
+            opacity: fadeAnim,
+            transform: [{ scale: scaleAnim }],
+          },
+        ]}
+      >
+        <LogoSvg width={110} height={110} fill="#7A1380" />
+        <Text style={styles.brandTitle}>SkillBridge</Text>
+      </Animated.View>
     </View>
   );
 }
@@ -15,7 +72,19 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#F9F9FB", // crisp clean off-white background from design
     alignItems: "center",
     justifyContent: "center",
+  },
+  logoContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  brandTitle: {
+    marginTop: 18,
+    fontSize: 26,
+    fontWeight: "800",
+    color: "#7A1380", // matching signature purple brand color
+    letterSpacing: -0.5,
   },
 });
